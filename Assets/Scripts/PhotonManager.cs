@@ -49,5 +49,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks {
     public override void OnJoinedRoom() {
         Debug.Log($"PhotonNetwork.InRoom = {PhotonNetwork.InRoom}");
         Debug.Log($"Player Count = {PhotonNetwork.CurrentRoom.PlayerCount}");
+        
+        foreach (var player in PhotonNetwork.CurrentRoom.Players) {
+            Debug.Log($"{player.Value.NickName}, {player.Value.ActorNumber}");
+        }
+
+        Transform[] points = GameObject.Find("SpawnPointGroup").GetComponentsInChildren<Transform>();
+        int idx = Random.Range(1, points.Length);
+
+        PhotonNetwork.Instantiate("Player", points[idx].position, points[idx].rotation, 0);
     }
 }

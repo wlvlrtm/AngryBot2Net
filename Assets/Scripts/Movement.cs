@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using Cinemachine;
 
 public class Movement : MonoBehaviour {
     private CharacterController controller;
@@ -12,6 +15,9 @@ public class Movement : MonoBehaviour {
     private Ray ray;
     private Vector3 hitPoint;
 
+    private PhotonView pv;
+    private CinemachineVirtualCamera virtualCamera;
+
     public float moveSpeed = 10.0f;
 
 
@@ -19,14 +25,24 @@ public class Movement : MonoBehaviour {
         controller = GetComponent<CharacterController>();
         transform = GetComponent<Transform>();
         animator = GetComponent<Animator>();
-        
         camera = Camera.main;
+
+        pv = GetComponent<PhotonView>();
+        virtualCamera = GameObject.FindObjectOfType<CinemachineVirtualCamera>();
+
+        if (pv.IsMine) {
+            virtualCamera.Follow = transform;
+            virtualCamera.LookAt = transform;
+        }
+
         plane = new Plane(transform.up, transform.position);
     }
 
     private void Update() {
-        Move();
-        Turn();
+        if (pv.IsMine) {
+            Move();
+            Turn();
+        }
     }
 
     float h => Input.GetAxis("Horizontal");
